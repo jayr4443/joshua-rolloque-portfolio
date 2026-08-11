@@ -10,6 +10,7 @@ import {
   Layers3,
   Mail,
   MapPin,
+  Phone,
   Menu,
   PlugZap,
   ScanLine,
@@ -21,7 +22,6 @@ import {
   X,
   Zap,
 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
 import { DemoApp, getDemoLinks } from "@/components/DemoApp";
 
 const capabilities = [
@@ -110,7 +110,6 @@ function App() {
 
   const visibleProjects = showAllProjects ? projects : projects.slice(0, 2);
 
-  // Smooth scroll back to top when an internal demo is launched
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -118,14 +117,49 @@ function App() {
   async function submitInquiry(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFormStatus("sending");
-    const form = new FormData(event.currentTarget);
-    const { error } = await supabase.from("portfolio_inquiries").insert({
-      name: String(form.get("name") ?? "").trim(),
-      email: String(form.get("email") ?? "").trim(),
-      message: String(form.get("message") ?? "").trim(),
-    });
-    setFormStatus(error ? "error" : "sent");
-    if (!error) event.currentTarget.reset();
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const name = String(formData.get("name") ?? "").trim();
+    const email = String(formData.get("email") ?? "").trim();
+    const message = String(formData.get("message") ?? "").trim();
+
+    try {
+      // Using FormSubmit.co - completely free and works with Cloudflare
+      const response = await fetch(
+        "https://formsubmit.co/ajax/jayrroullo16@gmail.com",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            message: message,
+            _subject: `Portfolio Inquiry from ${name}`,
+            _captcha: "false",
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok && data.success !== false) {
+        setFormStatus("sent");
+        form.reset();
+        // Auto-reset after 5 seconds
+        setTimeout(() => setFormStatus("idle"), 5000);
+      } else {
+        setFormStatus("error");
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setFormStatus("error");
+      // Auto-reset after 5 seconds
+      setTimeout(() => setFormStatus("idle"), 5000);
+    }
   }
 
   return (
@@ -141,9 +175,7 @@ function App() {
           <span className="brand-mark">
             <Sparkles size={16} />
           </span>
-          <span>
-            JOSHUA<span className="brand-dot">.</span>G
-          </span>
+          <span>JOSHUA G. ROLLOQUE</span>
         </a>
         <nav className={menuOpen ? "nav-links nav-open" : "nav-links"}>
           <a href="#capabilities" onClick={() => setMenuOpen(false)}>
@@ -505,6 +537,9 @@ function App() {
                 <span>
                   <MapPin size={16} /> Malabon City, Philippines
                 </span>
+                <span>
+                  <Phone size={16} /> +63 912 345 6789
+                </span>
               </div>
             </div>
             <form className="inquiry-form" onSubmit={submitInquiry}>
@@ -544,22 +579,19 @@ function App() {
                 {formStatus === "sending"
                   ? "Sending..."
                   : formStatus === "sent"
-                    ? "Message received"
+                    ? "Message received ✓"
                     : "Send the brief"}{" "}
-                {formStatus === "sent" ? (
-                  <Check size={17} />
-                ) : (
-                  <Send size={16} />
-                )}
+                <Send size={16} />
               </button>
               {formStatus === "error" && (
                 <p className="form-error">
-                  Something went wrong. Please email me directly instead.
+                  Something went wrong. Please try again or email me directly.
                 </p>
               )}
               {formStatus === "sent" && (
                 <p className="form-success">
-                  Thanks — your message is on its way.
+                  Thanks — your message is on its way! I'll get back to you
+                  soon.
                 </p>
               )}
             </form>
