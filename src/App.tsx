@@ -303,7 +303,6 @@ function App() {
               <span>Java</span>
               <span>Gradle</span>
             </div>
-            {/* duplicate track for seamless looping */}
             <div className="proof-track" aria-hidden="true">
               <span className="proof-label">BUILT WITH</span>
               <span>React.js</span>
