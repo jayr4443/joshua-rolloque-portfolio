@@ -278,12 +278,29 @@ function App() {
           <div className="section-wrap proof-inner">
             <span className="proof-label">BUILT WITH</span>
             <span>React.js</span>
+            <span>Next.js</span>
+            <span>Vite</span>
+            <span>Node.js</span>
+            <span>Express.js</span>
             <span>TypeScript</span>
+            <span>PHP</span>
+            <span>HTML</span>
+            <span>CSS</span>
+            <span>JavaScript</span>
+            <span>Tailwind CSS</span>
+            <span>Lighting CSS</span>
+            <span>Bootstrap</span>
             <span>Laravel</span>
             <span>MySQL / MSSQL</span>
+            <span>PostgreSQL</span>
+            <span>Supabase</span>
             <span>SAP</span>
             <span>REST APIs</span>
             <span>AI workflows</span>
+            <span>React Native</span>
+            <span>Kotlin</span>
+            <span>Java</span>
+            <span>Gradle</span>
           </div>
         </section>
 
